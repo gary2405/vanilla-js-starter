@@ -70,6 +70,33 @@ const crearTareaItem = (tarea) => {
     tareaItem.append(selectCheckbox, p, botonEliminar); //agrega checkbox, la tarea y el boton de eliminar
     return tareaItem;
 
+};
+const itsTime = async () => {
+    try {
+        let datos = await fetchtarea("http://localhost:3000/api/todo");
+        console.log(datos);
+        contenedortareas.innerHTML = ''; // Limpiar el contenedor de tareas antes de agregar las nuevas
+        contadorCompletadas = 0; // Reiniciar el contador de tareas completadas
+        if (datos.length === 0) {
+            mostrarMensajeNoTareas(); //mensaje si no hay tareas
+            return;
+        }
+        datos.forEach(dato => {
+            const tareaItem = crearTareaItem(dato); //hace un elemento dom a cada tarea
+            if (dato.completed) {
+                tareaItem.querySelector('input[type="checkbox"]').checked;
+                tareaItem.classList.add('completed');
+                contadorCompletadas++;
+            }
+            contenedortareas.appendChild(tareaItem); //agrega las tareas al contenedor
+        });
+        actualizarContadorCompletadas();
+    } catch (error) {
+        console.error("Error al obtener los datos", error);
+    }
+    cargarTareas()
+};
+
 
 
 
