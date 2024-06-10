@@ -98,5 +98,83 @@ const itsTime = async () => {
 };
 
 
+//aqui se contara y actualiza cada tarea que haya sido terminada
+const actualizarContadorCompletadas = () => {
+    numeroTareas.textContent = contadorCompletadas;
+ if (contenedortareas.children.length === 0) 
+    { mostrarMensajeNoTareas(); 
+
+ } else { ocultarMensajeNoTareas(); } };
+
+ //carga las tareas desde el server y muestra en la pagina
+const cargarTareas = async () => {
+    try {
+        let datos = await fetchtarea("http://localhost:3000/api/todo");
+        contenedortareas.innerHTML = ''; // Limpiar el contenedor de tareas antes de agregar las nuevas
+        contadorCompletadas = 0; // Reiniciar el contador de tareas completadas
+        
+        if (datos.length === 0) {
+            mostrarMensajeNoTareas();
+            return;
+        }
+        datos.forEach(dato => {
+            const tareaItem = crearTareaItem(dato); //hace elemento dom a cada tarea
+            if (dato.completed) {
+                tareaItem.querySelector('input[type="checkbox"]').checked = true;
+                tareaItem.classList.add('completed');
+                contadorCompletadas++;
+            }
+            contenedortareas.appendChild(tareaItem);
+            
+        });
+        actualizarContadorCompletadas();
+        if (contenedortareas.children.length === 0) {
+            mostrarMensajeNoTareas();
+        } else {
+            ocultarMensajeNoTareas();
+        }
+    } catch (error) {
+        console.error('Error al obtener los datos', error);
+    }
+};
+// funcion elimina tareas que ya estan completadas
+const eliminarTareasCompletadas = async () => {
+    const tareasCompletadas = document.querySelectorAll('.completed'); //obtiene las tareas terminadas
+    for (const tarea of tareasCompletadas) {
+        const id = tarea.dataset.id;
+        await borrarTareas("http://localhost:3000/api/todo", id); 
+        tarea.remove();
+    }
+    if (contenedortareas.children.length === 0) {
+        mostrarMensajeNoTareas();
+    }
+ 
+};
+
+//mostrara el mensaje de "no existen tareas"
+const mostrarMensajeNoTareas = () => {
+    const mensajeNoTareas = document.createElement('p');
+    mensajeNoTareas.id = 'mensajeNoTareas';
+    mensajeNoTareas.textContent = 'No existen tareas';
+    contenedortareas.appendChild(mensajeNoTareas); //pondra el mensaje en el contenedor
+};
+
+//funcion para ocultar el mensaje
+const ocultarMensajeNoTareas = () => {
+    const mensajeNoTareas = document.getElementById('mensajeNoTareas');
+    if (mensajeNoTareas) {
+        mensajeNoTareas.remove(); //quitara el mensaje de la pagina
+    }
+};
+
+botonTarea.addEventListener('click', agregarTarea);
+inputTarea.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') { //agrega tarea cuando con presionar enter
+        agregarTarea();
+    }
+});
+botonEliminarCompletadas.addEventListener('click', eliminarTareasCompletadas); //evento eliminar tareas terminadas
+itsTime();
+mostrarMensajeNoTareas();
 
 
