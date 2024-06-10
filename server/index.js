@@ -17,10 +17,10 @@ var tasks = [];
 
 taskRouter
   .route("/")
-  .get(function (req, res) {
+  .get(function (req, res) { //extrae todas las task
     return res.json(tasks);
   })
-  .post(function (req, res) {
+  .post(function (req, res) { //crea una nueva task
     tasks.push({
       ...req.body,
       id: uuid(),
@@ -52,4 +52,4 @@ taskRouter.route("/:task_id")
     return res.json({})
   });
 
-app.use("/api/task/", taskRouter);
+app.use("/api/todo/", taskRouter);
