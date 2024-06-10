@@ -53,7 +53,7 @@ const crearTareaItem = (tarea) => {
         actualizarContadorCompletadas();
     });
     
-    const p = document.createElement('p'); //crear elemento p para el texto de la tarea
+    const p = document.createElement('p'); //crear elemento p para el texto de tarea
     p.textContent = tarea.task;
     p.id = tarea.id;
     const botonEliminar = document.createElement('button'); //boton para eliminar cada tarea
@@ -64,13 +64,12 @@ const crearTareaItem = (tarea) => {
         tareaItem.remove(); //elimina la tarea de la pagina
         if (contenedortareas.children.length === 0) {
             mostrarMensajeNoTareas();
-        } 
-    
+        }
+        
     });
-
     tareaItem.append(selectCheckbox, p, botonEliminar); //agrega checkbox, la tarea y el boton de eliminar
     return tareaItem;
 
-}
+
 
 
